@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>From Code to Intelligence</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:#04070f;
+    color:white;
+    overflow:hidden;
+}
+
+/* ================= BACKGROUND CANVAS ================= */
+canvas{
+    position:fixed;
+    inset:0;
+    z-index:-4;
+}
+
+/* ================= AI HALO CORE ================= */
+#haloCore{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle at center,
+        rgba(255,215,0,0.30),
+        rgba(0,200,255,0.18),
+        transparent 65%);
+    animation:rotateHalo 28s linear infinite;
+    z-index:-3;
+}
+@keyframes rotateHalo{
+    from{ transform:rotate(0deg) scale(1.2); }
+    to{ transform:rotate(360deg) scale(1.2); }
+}
+
+/* ================= LIGHT PULSE ================= */
+#lightPulse{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle at center,
+        rgba(0,200,255,.25),
+        rgba(0,0,0,0) 70%);
+    mix-blend-mode:screen;
+    opacity:0;
+    transition:opacity .2s ease;
+    z-index:-2;
+}
+
+/* ================= PARALLAX ================= */
+#parallaxWrapper{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.flyer-image{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* ================= INTRO ================= */
+#introOverlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(6px);
+    z-index:10;
+    transition:opacity 1s ease;
+}
+#introOverlay.fadeOut{
+    opacity:0;
+    pointer-events:none;
+}
+.intro-title{
+    font-size:60px;
+    letter-spacing:4px;
+    font-weight:700;
+    background:linear-gradient(90deg,gold,#00c8ff,gold);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:gradientMove 6s linear infinite;
+}
+@keyframes gradientMove{
+    from{background-position:0%}
+    to{background-position:200%}
+}
+.intro-line{
+    width:0;
+    height:3px;
+    margin-top:20px;
+    background:linear-gradient(90deg,gold,#00c8ff);
+    animation:lineGrow 2s forwards 1s;
+}
+@keyframes lineGrow{
+    to{width:400px}
+}
+
+/* ================= STAGE BUTTON ================= */
+#stageControls{
+    position:absolute;
+    bottom:60px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+}
+#stageControls button{
+    padding:14px 28px;
+    font-weight:600;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,gold,#00c8ff);
+    cursor:pointer;
+}
+
+/* ================= SPOTLIGHT ================= */
+#spotlightOverlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:80px;
+    opacity:0;
+    pointer-events:none;
+    transition:.6s ease;
+}
+#spotlightOverlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+.spotlight-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(8px);
+}
+.spotlight-panel{
+    position:relative;
+    display:flex;
+    gap:60px;
+    max-width:1200px;
+    background:#0b1126;
+    border-radius:25px;
+    padding:50px;
+    box-shadow:0 30px 80px rgba(0,0,0,.8);
+}
+.spotlight-image{
+    width:380px;
+    height:460px;
+    object-fit:cover;
+    border-radius:20px;
+}
+.spotlight-content{
+    max-width:650px;
+    overflow-y:auto;
+}
+.spotlight-name{
+    font-size:48px;
+    background:linear-gradient(90deg,gold,#00c8ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.spotlight-role{
+    margin:10px 0 20px;
+    font-size:20px;
+}
+.spotlight-bio{
+    font-size:18px;
+    line-height:1.8;
+    white-space:pre-line;
+}
+.speaker-nav{
+    position:absolute;
+    top:30px;
+    right:40px;
+    display:flex;
+    gap:8px;
+    opacity:.4;
+}
+.speaker-nav button{
+    padding:8px 14px;
+    border:none;
+    border-radius:20px;
+    background:linear-gradient(135deg,gold,#00c8ff);
+    cursor:pointer;
+}
+.back-button{
+    position:absolute;
+    bottom:30px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div id="haloCore"></div>
+<div id="lightPulse"></div>
+
+<div id="parallaxWrapper">
+    <img src="assets/images/flyer.jpg" class="flyer-image">
+</div>
+
+<div id="stageControls">
+    <button onclick="openSpotlight(0)">View Speakers</button>
+</div>
+
+<div id="introOverlay">
+    <div class="intro-title">FROM CODE TO INTELLIGENCE</div>
+    <div class="intro-line"></div>
+</div>
+
+<div id="spotlightOverlay">
+    <div class="spotlight-backdrop"></div>
+    <div class="spotlight-panel">
+        <img id="spotlightImage" class="spotlight-image">
+        <div class="spotlight-content">
+            <div id="spotlightName" class="spotlight-name"></div>
+            <div id="spotlightRole" class="spotlight-role"></div>
+            <div id="spotlightBio" class="spotlight-bio"></div>
+        </div>
+    </div>
+    <div class="speaker-nav" id="speakerNav"></div>
+    <button class="back-button" onclick="closeSpotlight()">Back</button>
+</div>
+
+<audio id="bgMusic" src="assets/audio/sound background.mp3" loop></audio>
+
+<script>
+
+/* ===== AUDIO START ===== */
+const bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0.4;
+
+function startExperience(){
+
+    bgMusic.play()
+    .then(()=>{
+        console.log("Audio started successfully");
+    })
+    .catch(err=>{
+        console.log("Audio failed:", err);
+    });
+
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(()=>{});
+    }
+}
+
+document.addEventListener("click", startExperience, { once:true });
+
+/* ===== INTRO FADE ===== */
+setTimeout(()=>{
+    const intro=document.getElementById("introOverlay");
+    intro.classList.add("fadeOut");
+    setTimeout(()=>intro.style.display="none",1000);
+},4500);
+
+/* ===== PARTICLES ===== */
+const canvas=document.getElementById("bgCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let particles=[];
+for(let i=0;i<80;i++){
+    particles.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        vx:(Math.random()-.5)*.3,
+        vy:(Math.random()-.5)*.3
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+        p.x+=p.vx;
+        p.y+=p.vy;
+        if(p.x<0||p.x>canvas.width)p.vx*=-1;
+        if(p.y<0||p.y>canvas.height)p.vy*=-1;
+        ctx.fillStyle="rgba(0,200,255,.8)";
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fill();
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+
+/* ===== FULL SPEAKER DATA ===== */
+const speakers = [
+
+{
+name:"Charles A Babbage Jnr.",
+role:"Educator, Researcher & AI Specialist",
+bio:`Charles Jnr. Asiedu, widely known as Babbage, is a seasoned educator and researcher with a distinguished background in Information Technology and Artificial Intelligence.
+
+He earned his Bachelor of Science in Information Technology from Wisconsin International University College, graduating as the Valedictorian of his class. He subsequently completed his national service at the University of Ghana Business School, contributing to the Operations and Management Information Systems Department.
+
+Charles holds a research-based Master’s degree in Engineering from Huzhou University, China, awarded through a competitive merit-based Chinese scholarship for academic excellence. His specialization in Intelligent Information Processing Technology advanced his work in artificial intelligence, culminating in his research thesis titled "Sentiment Analysis on Twitter Data: A Performance Gap Between Deep Learning and Traditional Machine Learning Algorithms."
+
+Throughout his career, he has contributed to curriculum development for CTVET institutions, consulted for various organizations, and published research in respected journals.
+
+His research interests focus on Artificial Intelligence, Machine Learning applications, and their intersection with Healthcare and Education.`,
+image:"assets/images/Babbage.JPG"
+},
+
+{
+name:"Enoch Ansong",
+role:"AI Transformation Partner & Founder, Riverside AI",
+bio:`Enoch Ansong is an AI Transformation Partner, software developer, and educator from Ghana, West Africa.
+
+He is the founder of Riverside AI and the brand AI with Enoch, focusing on AI education, automation, and practical AI solutions for businesses and government teams across Africa.
+
+Enoch has built one of Africa’s largest AI communities, reaching over 2.5 million people through viral content on TikTok, YouTube, and Instagram, mentoring hundreds through workshops, one-on-one sessions, and bootcamps.
+
+He has guided executives and government teams in implementing AI solutions to improve operational efficiency.
+
+Recognized as Tech Creator of the Year at Ghana’s Creators Awards, he continues democratizing AI across Africa.`,
+image:"assets/images/enoch.PNG"
+},
+
+{
+name:"Frederick Kwame Minta",
+role:"Robotics Research Scientist & Technical Educator",
+bio:`Frederick Kwame Minta specializes in Artificial Intelligence, Robotics, and IoT.
+
+He currently serves as a Robotics Research Assistant at Ashesi University, developing embodied AI systems focused on Human-Robot Interaction and Social Robotics.
+
+He is the lead developer of the GAI-CRI Adaptive Framework integrating Generative AI with social robots for intelligent educational engagement.
+
+His expertise spans Industrial Automation, IoT architecture, Robot Motion Planning, Computer Vision, and Assistive Technology systems.`,
+image:"assets/images/Fredrick.JPG"
+},
+
+{
+name:"Mr. Edwin Abba",
+role:"Network Engineer & IT Infrastructure Lead",
+bio:`Mr. Edwin Abba serves as Head of the IT Support Department and oversees institutional networking and server infrastructure management.
+
+With extensive Cisco-based networking training, he manages routing, switching, infrastructure security, and enterprise system reliability across campus environments.
+
+He bridges academic instruction with enterprise-grade systems administration, ensuring high availability and operational continuity.`,
+image:"assets/images/siredwin.jpg"
+},
+
+{
+name:"Justice Simon Zotoo",
+role:"Software Engineer & Technology Leader",
+bio:`Justice Simon Zotoo is a software engineer and technology leader with a multidisciplinary background in IT and Pharmacy.
+
+He has served as a Teaching Assistant across Software Engineering, Programming in C++, Embedded Systems, Distributed Systems, and Human-Computer Interaction.
+
+He developed a Smart IoT-Based Gas Leakage Detection System and multiple scalable software platforms focused on database architecture and secure system design.
+
+He currently serves as President of the School of Computing and Technology Students’ Association, driving innovation and technical growth within his academic community.`,
+image:"assets/images/african.jpg"
+}
+
+];
+
+/* ===== NAVIGATION ===== */
+const nav=document.getElementById("speakerNav");
+speakers.forEach((_,i)=>{
+    const btn=document.createElement("button");
+    btn.innerText=i+1;
+    btn.onclick=()=>openSpotlight(i);
+    nav.appendChild(btn);
+});
+
+function openSpotlight(i){
+    const s=speakers[i];
+    spotlightImage.src=s.image;
+    spotlightName.innerText=s.name;
+    spotlightRole.innerText=s.role;
+    spotlightBio.innerText=s.bio;
+    spotlightOverlay.classList.add("active");
+    bgMusic.volume=.25;
+}
+function closeSpotlight(){
+    spotlightOverlay.classList.remove("active");
+    bgMusic.volume=.4;
+}
+document.addEventListener("keydown", e=>{
+    if(e.key>='1'&&e.key<='5') openSpotlight(parseInt(e.key)-1);
+    if(e.key==='Escape') closeSpotlight();
+});
+
+</script>
+
+</body>
+</html>

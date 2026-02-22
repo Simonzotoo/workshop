@@ -1,0 +1,124 @@
+/* Flyer container */
+.flyer-container {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    background-color: #050811;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Flyer image scaling */
+.flyer-image {
+    width: 95vw;
+    height: 95vh;
+    object-fit: contain;   /* Keeps original proportions */
+}
+
+/* Buttons on top of flyer */
+.buttons-overlay {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.start-overlay {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Dark overlay for readability */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 8, 17, 0.75);
+    z-index: -1;
+}
+
+.center {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    font-size: 55px;
+    color: gold;
+    animation: glow 3s infinite alternate;
+}
+
+.subtitle {
+    font-size: 22px;
+    opacity: 0.8;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    to { text-shadow: 0 0 25px rgba(255,215,0,0.9); }
+}
+
+.buttons {
+    margin-top: 40px;
+}
+
+button {
+    background: gold;
+    border: none;
+    padding: 14px 22px;
+    margin: 8px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.speaker-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+}
+
+.speaker-image {
+    width: 360px;
+    height: 360px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 0 40px rgba(255,215,0,0.6);
+}
+
+.speaker-name {
+    font-size: 48px;
+    color: gold;
+}
+
+.speaker-role {
+    font-size: 22px;
+    opacity: 0.85;
+}
+
+.speaker-bio {
+    font-size: 20px;
+    max-width: 650px;
+    line-height: 1.6;
+}
+
+.back-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
