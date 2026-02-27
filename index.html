@@ -115,6 +115,9 @@ canvas{
     transform:translateX(-50%);
     z-index:5;
 }
+#stageControls.hidden{
+    display:none;
+}
 #stageControls button{
     padding:14px 28px;
     font-weight:600;
@@ -349,7 +352,7 @@ image:"assets/images/Fredrick.JPG"
 {
 name:"Mr. Edwin Agbah",
 role:"Network Engineer & IT Infrastructure Lead",
-bio:`Mr. Edwin Abba serves as Head of the IT Support Department and oversees institutional networking and server infrastructure management.
+bio:`Mr. Edwin Agbah serves as Head of the IT Support Department and oversees institutional networking and server infrastructure management.
 
 With extensive Cisco-based networking training, he manages routing, switching, infrastructure security, and enterprise system reliability across campus environments.
 
@@ -368,6 +371,21 @@ He developed a Smart IoT-Based Gas Leakage Detection System and multiple scalabl
 
 He currently serves as President of the School of Computing and Technology Students’ Association, driving innovation and technical growth within his academic community.`,
 image:"assets/images/jaynew.jpg"
+},
+
+{
+name:"Maxwell Selorm Amuzu",
+role:"Manager, Cybersecurity & Digital Forensics Labs – WIUC",
+bio:`Maxwell Selorm Amuzu is a cybersecurity, digital forensics, and emerging technology specialist with a strong focus on securing intelligent systems across software, artificial intelligence, robotics, and networked environments.
+
+He leads WIUC’s integrated Cybersecurity, Digital Forensics, and AI Innovation Labs, where academia, industry, and applied research converge to solve real-world security challenges and build resilient digital infrastructure.
+
+His expertise spans secure software architecture, incident response, digital forensics investigations, AI governance, and cyber risk management for modern environments, including cloud platforms, IoT ecosystems, and autonomous systems.
+
+Maxwell has represented WIUC at regional and international cybersecurity forums and actively contributes to strengthening Africa’s cybersecurity capacity through mentorship, research collaboration, and ecosystem development.
+
+He is passionate about embedding security, ethics, and resilience into the design of intelligent systems, ensuring that innovation remains safe, trustworthy, and human-centered.`,
+image:"assets/images/max.jpg"
 }
 
 ];
@@ -382,21 +400,32 @@ speakers.forEach((_,i)=>{
 });
 
 function openSpotlight(i){
-    const s=speakers[i];
-    spotlightImage.src=s.image;
-    spotlightName.innerText=s.name;
-    spotlightRole.innerText=s.role;
-    spotlightBio.innerText=s.bio;
+    const s = speakers[i];
+
+    spotlightImage.src = s.image;
+    spotlightName.innerText = s.name;
+    spotlightRole.innerText = s.role;
+    spotlightBio.innerText = s.bio;
+
     spotlightOverlay.classList.add("active");
-    bgMusic.volume=.25;
+
+    document.getElementById("stageControls").classList.add("hidden"); // ADD THIS
+
+    bgMusic.volume = .25;
 }
 function closeSpotlight(){
     spotlightOverlay.classList.remove("active");
-    bgMusic.volume=.4;
+
+    document.getElementById("stageControls").classList.remove("hidden"); // ADD THIS
+
+    bgMusic.volume = .4;
 }
 document.addEventListener("keydown", e=>{
-    if(e.key>='1'&&e.key<='5') openSpotlight(parseInt(e.key)-1);
-    if(e.key==='Escape') closeSpotlight();
+    const num = parseInt(e.key);
+    if(!isNaN(num) && num >= 1 && num <= speakers.length){
+        openSpotlight(num - 1);
+    }
+    if(e.key === 'Escape') closeSpotlight();
 });
 
 </script>
